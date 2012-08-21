@@ -73,9 +73,20 @@ package {
 			var swfWidth:uint = swfArray[1].width;
 			var swfHeight:uint = swfArray[1].height;
 			
+			
+			swfArray[0].setLoc((0+1) * 200, 50, true);
 			swfArray[1].setLoc((1+1) * 200, 50, true);
 			
 			Sprite(swfArray[1]).addEventListener(MouseEvent.DOUBLE_CLICK, swf_doubleClick);
+			//Sprite(swfArray[0]).addEventListener(CustomEventBody.SENDING_EVENT, swf_eventIn); // to get body change Event to CustomEventBody
+			Sprite(swfArray[0]).addEventListener("sendingEvent", swf_eventIn);					// here you must know event name
+			
+		}
+		
+		private function swf_eventIn(event:Event):void {
+			//trace("swf event in: '" + event.body + "'");
+			trace("swf event in");
+			
 		}
 		
 		private function swf_doubleClick(event:MouseEvent):void {
