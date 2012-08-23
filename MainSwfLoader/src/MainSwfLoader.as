@@ -26,8 +26,8 @@ package {
 		
 		private var swfArray:Array;
 		
-		private var firstSwf:Sprite;
-		private var secondSwf:Sprite;
+		private var firstSwf:*;
+		private var secondSwf:*;
 		
 		private var swfEventManager:SwfEventManager;
 		
@@ -66,11 +66,12 @@ package {
 			}
 		}
 		
+		
 		private function loadComplete(event:Event):void {
 			loadItemCounter++;
 			swfArray.push(event.currentTarget.content);
 			if (loadItemCounter == requestArray.length) {
-				trace("Load complete: " + swfArray);
+				//trace("Load complete: " + swfArray);
 				initSwf();
 			}
 		}
@@ -89,24 +90,15 @@ package {
 				swfEventManager.mainStage = this.stage;
 				
 				if (swfArray[i].parent.name == FIRST) {
-					var isetloc:ISetLoc;
-					isetloc = swfArray[i] as ISetLoc;
-					
-					//this.addChild(isetloc as DisplayObject);
-					//isetloc.setLoc(0, 0);
-					
-					//this.addChild(firstSwf);
-					//swfEventManager.addSwf(firstSwf, FIRST);
-					this.addChild(swfArray[i]);
-					//swfEventManager.addSwf(swfArray[i], FIRST);
+					firstSwf = swfArray[i];
+					this.addChild(firstSwf);
+					//firstSwf.setLoc(0, 0);
+					swfEventManager.addSwf(firstSwf, FIRST);
 				} else if (swfArray[i].parent.name == SECOND) {
-					//secondSwf = new Sprite();
-					//secondSwf.addChild(swfArray[i]);
-					//this.addChild(secondSwf);
-					//swfEventManager.addSwf(secondSwf, SECOND);
-					this.addChild(swfArray[i]);
-					swfArray[i].setLoc(stage.stageWidth - swfArray[i].width, stage.stageHeight - swfArray[i].height);
-					//swfEventManager.addSwf(swfArray[i], SECOND);
+					secondSwf = swfArray[i];
+					this.addChild(secondSwf);
+					//secondSwf.setLoc(stage.stageWidth - swfArray[i].width, stage.stageHeight - swfArray[i].height);
+					swfEventManager.addSwf(secondSwf, SECOND);
 				}
 				
 			}

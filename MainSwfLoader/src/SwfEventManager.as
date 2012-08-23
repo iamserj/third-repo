@@ -16,66 +16,66 @@ package {
 	public class SwfEventManager extends Sprite {
 		
 		private static var _instance:SwfEventManager;
-		private var firstSwf:Sprite;
-		private var secondSwf:Sprite;
+		private var firstSwf:*;
+		private var secondSwf:*;
 		public var mainStage:Stage;
 		
-		static public function get instance():SwfEventManager {
+		public function SwfEventManager(pvt:PrivateClass) {
+			// nothing to do here
+		}
+		public static function get instance():SwfEventManager {
 			if(SwfEventManager._instance == null) {
 				SwfEventManager._instance = new SwfEventManager(new PrivateClass());
-				//trace("SwfEventManager instantiated");
-			} else {
-				//trace("Sorry, already have a SwfEventManager instantiated")
 			}
 			return SwfEventManager._instance;
 		}
 		
 		
-		public function SwfEventManager(pvt:PrivateClass) {
-			
-			
-		}
 		
-		public function addSwf(swfSprite:Sprite, name:String):void {
+		public function addSwf(swf:*, name:String):void {
 			switch (name) {
 				case MainSwfLoader.FIRST:
-					//firstSwf = new Sprite();
-					//firstSwf = swfSprite//.getChildAt(0) as Sprite;
-					//firstSwf.addEventListener(CustomEventBody.SEND_EVENT_FROM_1to1, eventIncome);
-					
+					firstSwf = swf;
+					firstSwf.addEventListener(CustomEventBody.SEND_EVENT_FROM_1, eventIncome);
 				break;
 				
 			case MainSwfLoader.SECOND:
-					//secondSwf = new Sprite();
-					//secondSwf = swfSprite//.getChildAt(0) as Sprite;
-					//secondSwf.addEventListener(CustomEventBody.SEND_EVENT_FROM_2to1, eventIncome);
-					
+					secondSwf = swf;
+					secondSwf.addEventListener(CustomEventBody.SEND_EVENT_FROM_2, eventIncome);
 				break;
 			}
 		}
 		
 		
 		private function eventIncome(event:CustomEventBody):void {
+			//trace("event.target = " + event.target);
 			if (event.body) {
-				var str:String = new String();
-				str = event.body.text;
+				var addressee:String = event.body.addressee;
+				var str:String = event.body.text;
 				var spr:Sprite = new Sprite();
 				spr = event.body.sprite;
 				
-				//(mainStage.getChildByName("textField2") as TextField).text = str;
+				trace("body.str: " + str);
 				
-				trace("body: " + event.body);
+				switch (addressee) {
+					case MainSwfLoader.FIRST:
+						//trace("this is string for first swf");
+						firstSwf.setText(str);
+					break;
+					case MainSwfLoader.SECOND:
+						//trace("this is string for second swf");
+						secondSwf.setText(str);
+					break;
+					default:
+				}
 			}
 		}
-		
-		
-		
 		
 	}
 	
 }
 class PrivateClass {
 	public function PrivateClass() {
-		//trace("Private class is up");
+		//trace("Private class called");
 	}
 }

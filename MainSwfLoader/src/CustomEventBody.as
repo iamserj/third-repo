@@ -11,10 +11,8 @@ package {
 		
 		protected var _body:*;
 		
-		public static const SEND_EVENT_FROM_1to1:String = "sendEventFrom1to1";
-		public static const SEND_EVENT_FROM_1to2:String = "sendEventFrom1to2";
-		public static const SEND_EVENT_FROM_2to1:String = "sendEventFrom2to1";
-		public static const SEND_EVENT_FROM_2to2:String = "sendEventFrom2to2";
+		public static const SEND_EVENT_FROM_1:String = "sendEventFrom1";
+		public static const SEND_EVENT_FROM_2:String = "sendEventFrom2";
 		
 		
 		
