@@ -54,7 +54,6 @@ package {
 		private function loadSwfs():void {
 			requestArray.push(["FirstSWF.swf", FIRST]);				// url request, name
 			requestArray.push(["SecondSWF.swf", SECOND]);			// url request, name
-			//trace(requestArray[1]);
 			
 			for (var i:uint = 0; i < requestArray.length; i++) {
 				loader = new Loader();
@@ -64,13 +63,11 @@ package {
 				loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityError);
 				loader.load(urlReq);
 				loader.name = requestArray[i][1];
-				//this.addChild(loader);
 			}
 		}
 		
 		private function loadComplete(event:Event):void {
 			loadItemCounter++;
-			//trace(event.currentTarget);
 			swfArray.push(event.currentTarget.content);
 			if (loadItemCounter == requestArray.length) {
 				trace("Load complete: " + swfArray);
@@ -92,18 +89,9 @@ package {
 				swfEventManager.mainStage = this.stage;
 				
 				if (swfArray[i].parent.name == FIRST) {
-					//firstSwf = new Sprite();
-					//firstSwf = swfArray[i];
-					//trace(firstSwf);
-					//firstSwf.setLoc(0, 0);		// err
-					
-					//this.addChild(swfArray[i]);s
-					//swfArray[i].setLoc(1, 1);
 					var isetloc:ISetLoc;
 					isetloc = swfArray[i] as ISetLoc;
-					trace(swfArray[i]);
-					trace(swfArray[i] as ISetLoc);
-					trace(isetloc)
+					
 					//this.addChild(isetloc as DisplayObject);
 					//isetloc.setLoc(0, 0);
 					
