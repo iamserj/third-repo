@@ -1,10 +1,13 @@
 package {
 	
+	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
+	import flash.events.SecurityErrorEvent;
 	import flash.net.URLRequest;
 	
 	/**
@@ -14,14 +17,20 @@ package {
 	
 	public class MainSwfLoader extends Sprite {
 		
+		public static const FIRST:String = "first";
+		public static const SECOND:String = "second";
+		
 		private var requestArray:Array;
-		private var loadItemCounter:uint;
+		private var loadItemCounter:uint = 0;
 		private var loader:Loader;
+		
+		private var swfArray:Array;
 		
 		private var firstSwf:Sprite;
 		private var secondSwf:Sprite;
 		
-		private var swfArray:Array;
+		private var swfEventManager:SwfEventManager;
+		
 		
 		
 		public function MainSwfLoader():void {
@@ -33,67 +42,87 @@ package {
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			// entry point
 			
-			swfArray = new Array();
+			swfEventManager = SwfEventManager.instance;
 			
 			requestArray = new Array();
-			requestArray.push("FirstSWF.swf", "SecondSWF.swf");
-			//trace(requestArray);
+			swfArray = new Array();
+			
+			loadSwfs();
+			
+		}
+		
+		private function loadSwfs():void {
+			requestArray.push(["FirstSWF.swf", FIRST]);				// url request, name
+			requestArray.push(["SecondSWF.swf", SECOND]);			// url request, name
+			//trace(requestArray[1]);
 			
 			for (var i:uint = 0; i < requestArray.length; i++) {
 				loader = new Loader();
-				var urlReq:URLRequest = new URLRequest(requestArray[i]);
-				loader.load(urlReq);
+				var urlReq:URLRequest = new URLRequest(requestArray[i][0]);
 				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadComplete);
-				this.addChild(loader);
+				loader.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
+				loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSecurityError);
+				loader.load(urlReq);
+				loader.name = requestArray[i][1];
+				//this.addChild(loader);
 			}
-			
 		}
 		
 		private function loadComplete(event:Event):void {
 			loadItemCounter++;
-			//trace ("Loaded swfs: " + loadItemCounter);
-			
-			swfArray.push((event.currentTarget as LoaderInfo).content);
-			
+			//trace(event.currentTarget);
+			swfArray.push(event.currentTarget.content);
 			if (loadItemCounter == requestArray.length) {
-				//loa
 				trace("Load complete: " + swfArray);
-				stage.addEventListener(MouseEvent.CLICK, stage_mouseClick);
+				initSwf();
 			}
-			
+		}
+		private function onSecurityError(event:SecurityErrorEvent):void {
+			trace("SecurityErrorEvent: " + event.text);
+		}
+		private function onIOError(event:IOErrorEvent):void {
+			trace("IOErrorEvent: " + event.text);
 		}
 		
-		private function stage_mouseClick(event:MouseEvent):void {
-			stage.removeEventListener(MouseEvent.CLICK, stage_mouseClick);
+		
+		private function initSwf():void {
 			
 			for (var i:uint = 0; i < swfArray.length; i++) {
-				swfArray[i].setLoc((i+1) * 200, 50);
+				
+				swfEventManager.mainStage = this.stage;
+				
+				if (swfArray[i].parent.name == FIRST) {
+					//firstSwf = new Sprite();
+					//firstSwf = swfArray[i];
+					//trace(firstSwf);
+					//firstSwf.setLoc(0, 0);		// err
+					
+					//this.addChild(swfArray[i]);s
+					//swfArray[i].setLoc(1, 1);
+					var isetloc:ISetLoc;
+					isetloc = swfArray[i] as ISetLoc;
+					trace(swfArray[i]);
+					trace(swfArray[i] as ISetLoc);
+					trace(isetloc)
+					//this.addChild(isetloc as DisplayObject);
+					//isetloc.setLoc(0, 0);
+					
+					//this.addChild(firstSwf);
+					//swfEventManager.addSwf(firstSwf, FIRST);
+					this.addChild(swfArray[i]);
+					//swfEventManager.addSwf(swfArray[i], FIRST);
+				} else if (swfArray[i].parent.name == SECOND) {
+					//secondSwf = new Sprite();
+					//secondSwf.addChild(swfArray[i]);
+					//this.addChild(secondSwf);
+					//swfEventManager.addSwf(secondSwf, SECOND);
+					this.addChild(swfArray[i]);
+					swfArray[i].setLoc(stage.stageWidth - swfArray[i].width, stage.stageHeight - swfArray[i].height);
+					//swfEventManager.addSwf(swfArray[i], SECOND);
+				}
+				
 			}
-			
-			var swfWidth:uint = swfArray[1].width;
-			var swfHeight:uint = swfArray[1].height;
-			
-			
-			swfArray[0].setLoc((0+1) * 200, 50, true);
-			swfArray[1].setLoc((1+1) * 200, 50, true);
-			
-			Sprite(swfArray[1]).addEventListener(MouseEvent.DOUBLE_CLICK, swf_doubleClick);
-			//Sprite(swfArray[0]).addEventListener(CustomEventBody.SENDING_EVENT, swf_eventIn); // to get body change Event to CustomEventBody
-			Sprite(swfArray[0]).addEventListener("sendingEvent", swf_eventIn);					// here you must know event name
-			
 		}
-		
-		private function swf_eventIn(event:Event):void {
-			//trace("swf event in: '" + event.body + "'");
-			trace("swf event in");
-			
-		}
-		
-		private function swf_doubleClick(event:MouseEvent):void {
-			trace("[MainSWFLoader]: double click from first catched");
-		}
-		
-		
 		
 	}
 	
